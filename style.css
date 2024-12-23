@@ -2,6 +2,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  list-style: none;
 }
 
 .calendar {
@@ -61,8 +62,14 @@
 }
 
 .cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
   text-align: center;
   line-height: 40px;
+
+  cursor: default;
 }
 
 .cell:nth-child(7n + 1) {
@@ -73,6 +80,88 @@
   color: blue;
 }
 
+.cell span {
+  cursor: pointer;
+}
+
 .other {
   opacity: 0.3;
 }
+
+.current {
+  position: relative;
+  z-index: 0;
+  color: #fff;
+}
+
+.current::before {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  z-index: -1;
+  left: 50%;
+  top: 48%;
+  transform: translate(-50%, -50%);
+  border-radius: 50px;
+  background-color: #9BA88D;
+}
+
+.line {
+  width: 100%;
+  border-top: 1px solid #000;
+
+  margin: 40px 0px
+}
+
+.todo {
+  display: none;
+  position: relative;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.list li {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #000;
+
+  margin-right: 16px;
+  cursor: pointer;
+}
+
+.check {
+  background-image: url(./img/check.png);
+  background-size: cover;
+}
+
+.check + p {
+  text-decoration: line-through;
+  opacity: 0.3;
+}
+
+.add-todo {
+  background-color: #9BA88D;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  
+  color: #fff;
+  font-size: 24px;
+
+  cursor: pointer;
+
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+

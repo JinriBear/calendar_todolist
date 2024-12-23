@@ -1,6 +1,12 @@
 let date = new Date();
 const month = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"];
+const dates = document.querySelector('.dates');
+const header = document.querySelector('.header');
+const todoContainer = document.querySelector('.todo');
+const todoList = document.querySelector('.list');
+const addTodo = document.querySelector('.add-todo');
+let isSelectDay = false;
 
 const render = () => {
   const currentYear = date.getFullYear();
@@ -30,8 +36,9 @@ const render = () => {
     nextDateArr.push(i);
 
   const dateArr = prevDateArr.concat(thisDateArr, nextDateArr);
+  // prevDateIndex는 
   const prevDateIndex = dateArr.indexOf(1);
-  const nextDateIndex = dateArr.indexOf(thisLastDate);
+  const nextDateIndex = dateArr.lastIndexOf(thisLastDate);
 
   dateArr.forEach((date, i) => {
     const dateType = i >= prevDateIndex && i < nextDateIndex + 1
@@ -46,8 +53,64 @@ const render = () => {
     span.textContent = date;
     
     div.append(span);
-    document.querySelector('.dates').append(div);
+    dates.append(div);
   })
 }
 
 render();
+
+const monthNavigator = (keyword) => {
+  date.setDate(1);
+  const monthAction = {
+    "prev-month": () => {
+      date.setMonth(date.getMonth() - 1);
+    },
+    "next-month": () => {
+      date.setMonth(date.getMonth() + 1);
+    }
+  }
+
+  if(!monthAction[keyword])
+    return
+
+  monthAction[keyword]();
+  dates.innerHTML = "";
+  render()
+}
+
+header.addEventListener('click', (e) => {
+  if(e.target.tagName !== "BUTTON")
+    return;
+  
+  const targetMonth = [...e.target.classList].pop();
+  monthNavigator(targetMonth);
+})
+
+dates.addEventListener('click', (e) => {
+  if(e.target.tagName !== "SPAN")
+    return
+
+  if(e.target.className.includes('current')){
+    e.target.classList.remove('current')
+    isSelectDay = false
+  }
+  else {
+    dates.childNodes.forEach((date) => {
+      date.firstChild.classList.remove('current');
+    })
+    e.target.classList.add('current');
+    isSelectDay = true
+  }
+
+  if(isSelectDay)
+    todoContainer.style.display = "block";
+  else 
+    todoContainer.style.display = "none";
+})
+
+todoList.addEventListener('click', (e) => {
+  if(e.target.tagName !== "DIV")
+    return;
+
+  e.target.classList.toggle('check');
+})
