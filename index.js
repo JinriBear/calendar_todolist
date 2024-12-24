@@ -111,6 +111,46 @@ dates.addEventListener('click', (e) => {
 todoList.addEventListener('click', (e) => {
   if(e.target.tagName !== "DIV")
     return;
-
   e.target.classList.toggle('check');
+});
+
+
+
+addTodo.addEventListener('click', () => {
+
+  const todoInput = document.createElement('input');
+  todoList.append(todoInput);
+  todoInput.focus();
+  
+  let isWrite = false;
+  const writeTodo = (e) => {
+    if(isWrite)
+      return;
+    if(e.type === "keydown" && e.code !== "Enter")
+      return;
+    if(todoInput.value === ""){
+      todoInput.remove();
+      return;
+    }
+    isWrite = !isWrite
+
+    const li = document.createElement('li');
+    const div = document.createElement('div');
+    const p = document.createElement('p');
+
+    div.classList.add('checkbox');
+    p.textContent = todoInput.value;
+
+    li.append(div);
+    li.append(p);
+    todoList.append(li);
+    todoInput.remove();
+  }
+
+  todoInput.addEventListener('focusout', writeTodo);
+  todoInput.addEventListener('keydown', writeTodo);
 })
+
+
+
+
