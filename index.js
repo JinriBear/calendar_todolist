@@ -1,5 +1,5 @@
 let date = new Date();
-const month = ["January", "February", "March", "April", "May", "June",
+const monthArr = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"];
 const dates = document.querySelector('.dates');
 const header = document.querySelector('.header');
@@ -10,13 +10,13 @@ let isSelectDay = false;
 
 const render = () => {
   const currentYear = date.getFullYear();
-  const cureentMonth = date.getMonth();
+  const currentMonth = date.getMonth();
 
   document.querySelector('.year').textContent = currentYear;
-  document.querySelector('.month').textContent = month[cureentMonth];
+  document.querySelector('.month').textContent = monthArr[currentMonth];
 
-  const prevLast = new Date(currentYear, cureentMonth, 0);
-  const thisLast = new Date(currentYear, cureentMonth + 1, 0);
+  const prevLast = new Date(currentYear, currentMonth, 0);
+  const thisLast = new Date(currentYear, currentMonth + 1, 0);
 
   const prevLastDate = prevLast.getDate();
   const prevLastDay = prevLast.getDay();
@@ -24,36 +24,52 @@ const render = () => {
   const thisLastDate = thisLast.getDate();
   const thisLastDay = thisLast.getDay();
 
+  const createDateCell = (date, relativeMonth) => {
+    const count = relativeMonth ==="prev" 
+                ? -1 
+                : relativeMonth === "next" 
+                ? 1
+                : 0;
+    
+    const _date = new Date(currentYear, currentMonth + count);
+
+    const div = document.createElement('div');
+    const span = document.createElement('span');
+
+    div.classList.add('cell');
+    span.dataset.date = `${_date.getFullYear()}-${_date.getMonth()+1}-${date}`;
+    span.textContent = date;
+    
+    div.append(span);
+    return div;
+  } 
+
   const prevDateArr = [];
-  const thisDateArr = [...Array(thisLastDate + 1).keys()].slice(1);
+  const thisDateArr = [];
   const nextDateArr = [];
 
   if(prevLastDay !== 6)
     for(let i=0; i<prevLastDay+1; i++)
-      prevDateArr.unshift(prevLastDate - i);
+      prevDateArr.unshift(createDateCell(prevLastDate - i, "prev"));
+  
+  for(let i=0; i<thisLastDate; i++)
+    thisDateArr[i] = createDateCell(i+1);
 
   for(let i=1; i<7-thisLastDay; i++)
-    nextDateArr.push(i);
+    nextDateArr.push(createDateCell(i, "next"));
 
   const dateArr = prevDateArr.concat(thisDateArr, nextDateArr);
-  // prevDateIndex는 
-  const prevDateIndex = dateArr.indexOf(1);
-  const nextDateIndex = dateArr.lastIndexOf(thisLastDate);
+  const prevDateIndex = dateArr.findIndex(element => element.textContent  === "1");
+  const nextDateIndex = dateArr.findLastIndex(element => element.textContent === `${thisLastDate}`);
 
   dateArr.forEach((date, i) => {
     const dateType = i >= prevDateIndex && i < nextDateIndex + 1
                   ? 'this'
                   : 'other';
 
-    const div = document.createElement('div');
-    const span = document.createElement('span');
-    
-    div.classList.add('cell')
-    span.classList.add(dateType);
-    span.textContent = date;
-    
-    div.append(span);
-    dates.append(div);
+    date.firstChild.classList.add(dateType);
+                    
+    dates.append(date);
   })
 }
 
