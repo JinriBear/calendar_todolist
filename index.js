@@ -1,11 +1,13 @@
 let date = new Date();
 const monthArr = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"];
+const todoDataBase = {};
 const dates = document.querySelector('.dates');
 const header = document.querySelector('.header');
 const todoContainer = document.querySelector('.todo');
 const todoList = document.querySelector('.list');
 const addTodo = document.querySelector('.add-todo');
+let currentDate;
 let isSelectDay = false;
 
 const render = () => {
@@ -102,9 +104,29 @@ header.addEventListener('click', (e) => {
   monthNavigator(targetMonth);
 })
 
+const createTodo = (todo) => {
+  const li = document.createElement('li');
+  const div = document.createElement('div');
+  const p = document.createElement('p');
+
+  if(todo.check)
+    div.classList.add('checkbox', 'check');
+  else
+    div.classList.add('checkbox');
+  
+  p.textContent = todo.content;
+  
+  li.append(div);
+  li.append(p);
+  todoList.append(li);
+}
+
+
 dates.addEventListener('click', (e) => {
   if(e.target.tagName !== "SPAN")
     return
+  
+  currentDate = e.target.dataset.date.split("-");
 
   if(e.target.className.includes('current')){
     e.target.classList.remove('current')
@@ -118,8 +140,21 @@ dates.addEventListener('click', (e) => {
     isSelectDay = true
   }
 
-  if(isSelectDay)
+  if(isSelectDay){
     todoContainer.style.display = "block";
+    todoList.innerHTML = "";
+    const [year, month, date] = currentDate;
+    
+    if(
+      todoDataBase[year] &&
+      todoDataBase[year][month] &&
+      todoDataBase[year][month][date]
+    ) {
+      todoDataBase[year][month][date].forEach((todo) => {
+        createTodo(todo);
+      })
+    }
+  }
   else 
     todoContainer.style.display = "none";
 })
@@ -130,10 +165,7 @@ todoList.addEventListener('click', (e) => {
   e.target.classList.toggle('check');
 });
 
-
-
 addTodo.addEventListener('click', () => {
-
   const todoInput = document.createElement('input');
   todoList.append(todoInput);
   todoInput.focus();
@@ -150,23 +182,26 @@ addTodo.addEventListener('click', () => {
     }
     isWrite = !isWrite
 
-    const li = document.createElement('li');
-    const div = document.createElement('div');
-    const p = document.createElement('p');
+    const todoObj = {
+      check: false,
+      content: todoInput.value
+    }
 
-    div.classList.add('checkbox');
-    p.textContent = todoInput.value;
+    const [year, month, date] = currentDate;
 
-    li.append(div);
-    li.append(p);
-    todoList.append(li);
+    if(!todoDataBase[year])
+      todoDataBase[year] = {};
+    if(!todoDataBase[year][month])
+      todoDataBase[year][month] = {};
+    if(!todoDataBase[year][month][date])
+      todoDataBase[year][month][date] = [];
+
+    todoDataBase[year][month][date].push(todoObj);
+
+    createTodo(todoObj);
     todoInput.remove();
   }
 
   todoInput.addEventListener('focusout', writeTodo);
   todoInput.addEventListener('keydown', writeTodo);
 })
-
-
-
-
