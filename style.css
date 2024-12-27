@@ -126,11 +126,17 @@
 
 .list li {
   display: flex;
-  margin-bottom: 10px;
+  align-items: center;
+  margin-bottom: 10px; 
+}
+
+.list li p {
+  width: 100%;
+  word-break: break-all;
 }
 
 .list input {
-  margin-left: 30px;
+  width: 100%;
   margin-bottom: 20px;
   background-color: inherit;
   font-size: 16px;
@@ -160,6 +166,15 @@
 .check + p {
   text-decoration: line-through;
   opacity: 0.3;
+}
+
+.deletebox {
+  background-image: url(./img/trash.png);
+  background-size: cover;
+  width: 16px;
+  height: 16px;
+
+  cursor: pointer;
 }
 
 .add-todo {

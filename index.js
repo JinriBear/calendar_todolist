@@ -106,22 +106,24 @@ header.addEventListener('click', (e) => {
 
 const createTodo = (todo) => {
   const li = document.createElement('li');
-  const div = document.createElement('div');
+  const checkBox = document.createElement('div');
+  const deleteBox = document.createElement('div');
   const p = document.createElement('p');
 
   if(todo.check)
-    div.classList.add('checkbox', 'check');
+    checkBox.classList.add('checkbox', 'check');
   else
-    div.classList.add('checkbox');
+    checkBox.classList.add('checkbox');
   
   li.dataset.todoId = todo.todoId;
+  deleteBox.classList.add('deletebox')
   p.textContent = todo.content;
   
-  li.append(div);
+  li.append(checkBox);
   li.append(p);
+  li.append(deleteBox);
   todoList.append(li);
 }
-
 
 dates.addEventListener('click', (e) => {
   if(e.target.tagName !== "SPAN")
@@ -164,9 +166,28 @@ todoList.addEventListener('click', (e) => {
   if(e.target.tagName !== "DIV")
     return;
 
-  e.target.classList.toggle('check');
-  console.log(e.target.parentElement.dataset.todoId);
-  console.log(currentDate);
+  const todoId = e.target.parentElement.dataset.todoId;
+  const [year, month, date] = currentDate;
+
+  if(e.target.className.includes('checkbox')){
+    e.target.classList.toggle('check');
+  
+    todoDataBase[year][month][date].forEach((data)=>{
+      if(data.todoId.toString() === todoId)
+        data.check= !data.check;
+    })
+  } else if(e.target.className.includes('deletebox')){
+    const temp = todoDataBase[year][month][date].filter((data) => {
+      return data.todoId.toString() !== todoId
+    })
+    todoDataBase[year][month][date] = temp;
+    todoList.innerHTML = "";
+    todoDataBase[year][month][date].forEach((todo) => {
+      createTodo(todo);
+    })
+  }
+
+  
 });
 
 addTodo.addEventListener('click', () => {
