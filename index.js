@@ -114,6 +114,7 @@ const createTodo = (todo) => {
   else
     div.classList.add('checkbox');
   
+  li.dataset.todoId = todo.todoId;
   p.textContent = todo.content;
   
   li.append(div);
@@ -162,7 +163,10 @@ dates.addEventListener('click', (e) => {
 todoList.addEventListener('click', (e) => {
   if(e.target.tagName !== "DIV")
     return;
+
   e.target.classList.toggle('check');
+  console.log(e.target.parentElement.dataset.todoId);
+  console.log(currentDate);
 });
 
 addTodo.addEventListener('click', () => {
@@ -180,14 +184,10 @@ addTodo.addEventListener('click', () => {
       todoInput.remove();
       return;
     }
+    
     isWrite = !isWrite
-
-    const todoObj = {
-      check: false,
-      content: todoInput.value
-    }
-
     const [year, month, date] = currentDate;
+    const todoId = Date.now();
 
     if(!todoDataBase[year])
       todoDataBase[year] = {};
@@ -195,6 +195,12 @@ addTodo.addEventListener('click', () => {
       todoDataBase[year][month] = {};
     if(!todoDataBase[year][month][date])
       todoDataBase[year][month][date] = [];
+    
+    const todoObj = {
+      todoId: todoId,
+      check: false,
+      content: todoInput.value
+    }
 
     todoDataBase[year][month][date].push(todoObj);
 
