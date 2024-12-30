@@ -1,7 +1,6 @@
 let date = new Date();
 const monthArr = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"];
-const todoDataBase = {};
 const dates = document.querySelector('.dates');
 const header = document.querySelector('.header');
 const todoContainer = document.querySelector('.todo');
@@ -9,6 +8,17 @@ const todoList = document.querySelector('.list');
 const addTodo = document.querySelector('.add-todo');
 let currentDate;
 let isSelectDay = false;
+
+let todoDataBase;
+if(localStorage.getItem('todo') === null){
+  todoDataBase = {};
+} else {
+  todoDataBase = JSON.parse(localStorage.getItem('todo'));
+}
+
+const updateLocalStorage = () => {
+  localStorage.setItem('todo', JSON.stringify(todoDataBase));
+}
 
 const render = () => {
   const currentYear = date.getFullYear();
@@ -134,8 +144,7 @@ dates.addEventListener('click', (e) => {
   if(e.target.className.includes('current')){
     e.target.classList.remove('current')
     isSelectDay = false
-  }
-  else {
+  } else {
     dates.childNodes.forEach((date) => {
       date.firstChild.classList.remove('current');
     })
@@ -176,11 +185,14 @@ todoList.addEventListener('click', (e) => {
       if(data.todoId.toString() === todoId)
         data.check= !data.check;
     })
+
+    updateLocalStorage();
   } else if(e.target.className.includes('deletebox')){
     const temp = todoDataBase[year][month][date].filter((data) => {
       return data.todoId.toString() !== todoId
     })
     todoDataBase[year][month][date] = temp;
+    updateLocalStorage();
     todoList.innerHTML = "";
     todoDataBase[year][month][date].forEach((todo) => {
       createTodo(todo);
@@ -224,6 +236,7 @@ addTodo.addEventListener('click', () => {
     }
 
     todoDataBase[year][month][date].push(todoObj);
+    updateLocalStorage();
 
     createTodo(todoObj);
     todoInput.remove();
