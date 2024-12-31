@@ -132,6 +132,7 @@
 
 .list li p {
   width: 100%;
+  cursor: pointer;
   word-break: break-all;
 }
 

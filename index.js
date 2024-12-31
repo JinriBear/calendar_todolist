@@ -172,9 +172,9 @@ dates.addEventListener('click', (e) => {
 })
 
 todoList.addEventListener('click', (e) => {
-  if(e.target.tagName !== "DIV")
+  if(e.target.tagName !== "DIV" && e.target.tagName !== "P")
     return;
-
+  
   const todoId = e.target.parentElement.dataset.todoId;
   const [year, month, date] = currentDate;
 
@@ -197,9 +197,47 @@ todoList.addEventListener('click', (e) => {
     todoDataBase[year][month][date].forEach((todo) => {
       createTodo(todo);
     })
-  }
+  } else if(e.target.tagName === "P") {
+    const isChecked = [...e.target.previousElementSibling.classList].includes('check');
+    if(isChecked)
+      return;
 
-  
+    const input = document.createElement('input');
+    input.value = e.target.textContent;
+    e.target.parentElement.replaceWith(input);
+    input.focus()
+
+    const modifyTodo = (e) => {
+      // if(isWrite)
+      //   return;
+      if(e.type === "keydown" && e.code !== "Enter")
+        return;
+      
+      todoDataBase[year][month][date].forEach((todo) => {
+        if(todo.todoId.toString() === todoId){
+          todo.content = e.target.value;
+          updateLocalStorage();
+        }
+      })
+
+      const li = document.createElement('li');
+      const checkBox = document.createElement('div');
+      const deleteBox = document.createElement('div');
+      const p = document.createElement('p');
+
+      checkBox.classList.add('checkbox');
+      li.dataset.todoId = todoId;
+      deleteBox.classList.add('deletebox')
+      p.textContent = e.target.value;
+      
+      li.append(checkBox);
+      li.append(p);
+      li.append(deleteBox);
+      input.replaceWith(li);
+    }
+
+    input.addEventListener('keydown', modifyTodo);
+  }
 });
 
 addTodo.addEventListener('click', () => {
