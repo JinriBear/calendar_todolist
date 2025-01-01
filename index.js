@@ -207,12 +207,16 @@ todoList.addEventListener('click', (e) => {
     e.target.parentElement.replaceWith(input);
     input.focus()
 
+    let isModify = false;
+
     const modifyTodo = (e) => {
-      // if(isWrite)
-      //   return;
+      if(isModify)
+        return;
       if(e.type === "keydown" && e.code !== "Enter")
         return;
       
+      isModify = !isModify;
+
       todoDataBase[year][month][date].forEach((todo) => {
         if(todo.todoId.toString() === todoId){
           todo.content = e.target.value;
@@ -237,6 +241,7 @@ todoList.addEventListener('click', (e) => {
     }
 
     input.addEventListener('keydown', modifyTodo);
+    input.addEventListener('focusout', modifyTodo);
   }
 });
 
