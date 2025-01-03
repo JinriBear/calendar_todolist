@@ -44,12 +44,23 @@ const render = () => {
                 : 0;
     
     const _date = new Date(currentYear, currentMonth + count);
+    const _year = _date.getFullYear();
+    const _month = _date.getMonth() + 1;
 
     const div = document.createElement('div');
     const span = document.createElement('span');
 
+    if(
+      todoDataBase[_year] &&
+      todoDataBase[_year][_month] &&
+      todoDataBase[_year][_month][date] &&
+      todoDataBase[_year][_month][date].length > 0
+    ) {
+      span.classList.add('has-todo');
+    }
+
     div.classList.add('cell');
-    span.dataset.date = `${_date.getFullYear()}-${_date.getMonth()+1}-${date}`;
+    span.dataset.date = `${_year}-${_month}-${date}`;
     span.textContent = date;
     
     div.append(span);

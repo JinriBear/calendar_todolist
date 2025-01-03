@@ -195,3 +195,19 @@
   transform: translateX(-50%);
 }
 
+.has-todo {
+  position: relative;  
+}
+
+.has-todo::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50px;
+  top: 70%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #9BA88D;
+}
+
